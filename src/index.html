@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="ngApp">
+<head>
+    <title>SecureApp - User security</title>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
+
+    <!-- CSS  -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" onerror="document.body.className+=' icon-error'">
+    <link href="/css/materialize.min.css" rel="stylesheet">
+    <link href="/css/materializeplus.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/async/1.4.2/async.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.9/angular.min.js"></script>
+    <script src="js/ajax.js"></script>
+    <script src="js/mock-account-shield.js"></script>
+    <script src="js/controllers.js"></script>
+    
+    <style type="text/css">
+        /* Layout */
+        #dashboard {width: 100%; height: 100%; height: 100vh; overflow: hidden;}
+        #content-container {height: calc(100% - 5.5em); overflow: hidden;}
+        #content-sidebar, #content-main {height: 100%;}
+        .col:empty:before {content: "."; color: transparent; }
+
+        /* Materialize overides */
+        .material-tooltip {max-width: 20em; line-height: inherit;}
+
+        /* Helpers */
+        .action {cursor: pointer;}
+        .hint {margin-left: 0.25em; opacity: 0.25; cursor: help;}
+
+        /* Specific styling */
+        #content-main {overflow: auto;}
+        #content-main .content-main-container {float: none; margin: auto; max-width: 60rem;}
+        #content-main .tabs {background-color: transparent;}
+        #content-main .tabs i {vertical-align: middle;}
+        #content-main .panel {margin: 2rem 0; padding: 1px 1rem 1rem;}
+        #content-main .collapsible-header {height: auto;}
+        #content-main .current>.collapsible-header {border-right: 10px solid #8bc34a;}
+        @media only screen and (max-width : 992px) {
+            #content-main .collapsible-header .col.s10 {line-height: 1.5;}
+        }
+        #content-main .collapsible-header.active, #content-main .collapsible-header:hover {background-color: #eee;}
+        #content-main .collapsible-header .row {margin-bottom: 0;}
+        #content-main .collapsible-body {padding: 0 1rem;}
+        #content-main .session-card .collapsible-header .session-type-icon:before{content: "verified_user"; font-weight: normal; color: #8bc34a;}
+        #content-main .session-card .collapsible-header.alert .session-type-icon:before{content: "report"; color: #fdd835;}
+        #content-main .session-card .collapsible-body .value {text-align: right; font-weight: 300;}
+        #content-main .device-card .collapsible-header .device-type-icon:before{content: "devices"; font-weight: normal;}
+        #content-main .device-card .collapsible-header .device-type-icon[title^='Phone']:before{content: "phone_android";}
+        #content-main .device-card .collapsible-header .device-type-icon[title^='Phablet']:before{content: "tablet";;}
+        #content-main .device-card .collapsible-header .device-type-icon[title^='Tablet']:before{content: "tablet_mac";}
+        #content-main .device-card .collapsible-header .device-type-icon[title^='Laptop']:before{content: "laptop";}
+        #content-main .device-card .collapsible-header .device-type-icon[title^='Desktop']:before{content: "tv";}
+        #content-main .device-card .collapsible-header .device-type {font-weight: bold;}
+        #content-main .device-card .collapsible-header .time {padding-left: 0.5em;}
+        #content-main .device-card .collapsible-body {margin-top: 20px;}
+        #content-main .device-card .collapsible-body .row {padding-top: 1rem;}
+        #content-main .device-card .collapsible-body .name {text-align: right; font-weight: 300;}
+        #content-main .device-card .location-cards {margin-top: -10px; border: none;}
+        #content-main .device-card .location-card:last-child .collapsible-header {border: none;}
+        #content-main .device-card .location-card .collapsible-header:after {content: '\25bc'; float: right; margin-right: 0.5rem; font-size: 80%; color: darkgrey; text-shadow: 1px 1px 0 white;}
+        #content-main .device-card .location-card .collapsible-header.active:after {content: '\25b2';}
+        #content-main .device-card .location-card .collapsible-body {font-size: 90%;}
+        #content-main .device-card .location-card .collapsible-body .location-map {margin-bottom: 0;}
+    </style>
+</head>
+
+<body ng-controller="ASCtrl">
+
+    <!-- START MAIN -->
+    <div id="main">
+        <!-- START WRAPPER -->
+        <div class="wrapper">
+            
+            <!-- START CONTENT -->
+            <section id="content">   
+
+        <!--start container-->
+        <div class="container">
+          <div class="section">
+
+            <div id="content-main" class="col s11 m9 l10">
+                <div class="content-main-container col s11 m10 l9">
+                    <ul class="tabs purple-text active-text-purple">
+                        <li class="tab col s4"><a class="active" href="#security-activity"><i class="material-icons">list</i> Activity</a></li>
+                        <li class="tab col s4"><a href="#security-devices"><i class="material-icons">devices</i> Devices</a></li>
+                        <li class="tab col s4"><a href="#security-settings"><i class="material-icons">settings</i> Settings</a></li>
+                    </ul>
+                    <div id="security-activity" class="panel white z-depth-1">
+                        <h4><i class="material-icons small">list</i> User account activity</h4>
+                        <p class="light">Track sessions used with this account in the last 30 days</p>
+                        <ul class="session-cards collapsible z-depth-0" data-collapsible="accordion">
+                            <li class="session-card" ng-repeat="session in sessions">
+                                <div class="collapsible-header active">
+                                    <div class="row">
+                                        <div class="col s2 m1 l1">
+                                            <i class="material-icons session-type-icon grey-text text-darken-2"></i>
+                                        </div>
+                                        <div class="col s10 m10 l3 truncate">
+                                            <span class="session-type">{{session.time | date:medium}}</span>
+                                        </div>
+                                        <div class="col s10 m10 l6 truncate">
+                                            <span class="place">{{session.device.platform}} {{session.device.type}}</span>
+                                            <span class="time grey-text">- {{session.connection.city}}, {{session.connection.country}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="collapsible-body">
+                                    <div class="row" ng-repeat="item in session.history">
+                                        <div class="name col s8 offset-s1">{{item.title}}</div>
+                                        <div class="value col s3">{{item.duration / 60 | number:0}} mins</div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                        <p class="right-align light">Notice anything suspicious? <a href="#">Report it</a></p>
+                    </div>
+                    <div id="security-devices" class="panel white z-depth-1">
+                        <h4><i class="material-icons small">devices</i> User verified devices</h4>
+                        <p class="light">Review and manage which devices have access to this account</p>
+                        <ul class="device-cards collapsible z-depth-0" data-collapsible="accordion">
+                            <li class="device-card" ng-repeat="device in devices">
+                                <div class="collapsible-header active">
+                                    <div class="row">
+                                        <div class="col s2 m1 l1">
+                                            <i class="material-icons device-type-icon grey-text text-darken-2" title="{{device.type}}"></i>
+                                        </div>
+                                        <div class="col s10 m10 l3 truncate">
+                                            <span class="device-type">{{device.platform}} {{device.type}}</span>
+                                        </div>
+                                        <div class="col s10 m10 l6 truncate">
+                                            <span class="place">{{device.sessions[0].connection.city}}, {{device.sessions[0].connection.country}}</span>
+                                            <span class="time grey-text">- {{device.sessions[0].time | date:medium}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="collapsible-body">
+                                    <div class="row">
+                                        <div class="name col s3">Account access</div>
+                                        <div class="value col s8 offset-s1">
+                                            <button class="btn btn-small red darken-1 z-depth-0">Remove</button>
+                                            <i class="material-icons hint tooltipped" data-position="bottom" data-delay="50" data-tooltip="Forget this device and treat it as unrecognized if used again.">help_outline</i>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="name col s3">Last locations used</div>
+                                        <div class="value col s8 offset-s1">
+                                            <ul class="location-cards collapsible z-depth-0" data-collapsible="accordion">
+                                                <li class="location-card" ng-repeat="session in device.sessions">
+                                                    <div class="collapsible-header transparent no-padding">
+                                                        <span class="place">{{session.connection.city}}, {{session.connection.country}}</span>
+                                                        <span class="time grey-text hide-on-small-only">- {{session.time | date:medium}}</span>
+                                                    </div>
+                                                    <div class="collapsible-body">
+                                                        <div class="row location-time">
+                                                            <div class="name col s12 m2 no-padding">Time</div>
+                                                            <div class="value col s12 m9 offset-m1">{{session.time | date:medium}}</div>
+                                                        </div>
+                                                        <div class="row location-duration">
+                                                            <div class="name col s12 m2 no-padding">Duration</div>
+                                                            <div class="value col s12 m9 offset-m1">12 mins</div>
+                                                        </div>
+                                                        <div class="row location-map">
+                                                            <div class="name col s12 m2 no-padding">Location</div>
+                                                            <div class="value col s12 m9 offset-m1">
+                                                                <a href="https://www.google.com/maps/@{{episode.case.watchValues['location~coords']}},10z" target="map" title="Open in Google Maps">
+                                                                    <img src="https://maps.googleapis.com/maps/api/staticmap?center={{episode.case.watchValues['location~coords']}}&zoom=10&size=600x350&markers=icon:http://echo-central.com.s3-website-us-east-1.amazonaws.com/circle.png|shadow:false|51.0797111,-1.8083435" alt="Location map" style="width: 100%; filter: saturate(0); -webkit-filter: saturate(0);" />
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row location-map-caption">
+                                                            <div class="name col s12 m2 no-padding"></div>
+                                                            <div class="value col s12 m9 offset-m1 grey-text">Approximate location as reported by your internet provider</div>
+                                                        </div>
+                                                        <div class="row location-place">
+                                                            <div class="name col s12 m2 no-padding"></div>
+                                                            <div class="value col s12 m9 offset-m1">{{session.connection.city}}, {{session.connection.country}}</div>
+                                                        </div>
+                                                        <div class="row location-ip">
+                                                            <div class="name col s12 m2 no-padding">IP Address</div>
+                                                            <div class="value col s12 m9 offset-m1">
+                                                                {{session.connection.ipAddress}}
+                                                                <i class="material-icons hint tooltipped" data-position="bottom" data-delay="50" data-tooltip="To help you confirm that this activity was yours, you can check whether the IP address belongs to an Internet Service Provider that you've used recently.">help_outline</i>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div id="security-settings" class="panel white z-depth-1">
+                        <h4><i class="material-icons small">settings</i> User security settings</h4>
+                        <p class="light">Protect you account - get alerted to login attempts</p>
+                        <ul class="settings-cards collapsible z-depth-0">
+                            <li id="settings-set" class="settings-card">
+                                <div class="collapsible-header">
+                                    <i class="material-icons settings-type-icon grey-text text-darken-2">contact_phone</i>
+                                    Set contact details
+                                </div>
+                                <div class="collapsible-body">
+                                    <div class="row">
+                                        <div class="col s6">
+                                            <p>We use these contact details to communicate with you about activity on your account.  The information you enter here should be personal to you - do not provide details of  means of communication which you share with other people.</p>
+                                        </div>
+                                        <div class="col s6">
+                                            <div id="edit-email" class="row">
+                                                <div class="input-field col s12">
+                                                    <input id="email" type="email" class="validate" ng-model="user.email">
+                                                    <label for="email">Email</label>
+                                                </div>
+                                            </div>
+                                            <div id="edit-sms" class="row">
+                                                <div class="input-field col s12">
+                                                    <input id="sms" type="tel" maxlength="20" class="validate" ng-model="user.mobile">
+                                                    <label for="sms">Mobile no.</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li id="settings-choose" class="settings-card">
+                                <div class="collapsible-header active">
+                                    <i class="material-icons settings-type-icon grey-text text-darken-2">notifications</i>
+                                    Choose when to be alerted
+                                </div>
+                                <div class="collapsible-body">
+                                    <table class="bordered">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th class="center-align">
+                                                    <i class="material-icons">email</i>
+                                                    <br>Email<br>
+                                                    <span class="light">to <a class="toggle" href="#edit-email" onclick="$('#settings-set .collapsible-header').click()">{{user.email}}</a></span>
+                                                </th>
+                                                <th class="center-align">
+                                                    <i class="material-icons">textsms</i>
+                                                    <br>Text message<br>
+                                                    <span class="light">to <a class="toggle" href="#edit-sms" onclick="$('#settings-set .collapsible-header').click()">{{user.mobile}}</a></span>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr></tr>
+                                            <tr>
+                                                <td>
+                                                    Critical security risks<br>
+                                                    <span class="light">E.g. if a hacked has your password and tries to sign in to your account</span>
+                                                </td>
+                                                <td class="center-align">
+                                                    <input id="critical-email" class="filled-in" type="checkbox" ng-model="user.notifications.alerts.email">
+                                                    <label for="critical-email"></label>
+                                                </td>
+                                                <td class="center-align">
+                                                    <input id="critical-sms" class="filled-in" type="checkbox" ng-model="user.notifications.alerts.sms">
+                                                    <label for="critical-sms"></label>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    Routine account activity<br>
+                                                    <span class="light">Receive a regular digest of your account activity</span>
+                                                </td>
+                                                <td class="center-align">
+                                                    <input id="regular-email" class="filled-in" type="checkbox" ng-model="user.notifications.activity">
+                                                    <label for="regular-email"></label>
+                                                </td>
+                                                <td></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </li>                                
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+
+          </div>
+
+        </div>
+        <!--end container-->
+      </section>
+      <!-- END CONTENT -->
+    </div>
+    <!-- END WRAPPER -->
+
+  </div>
+  <!-- END MAIN -->
+
+  <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+  <script src="js/materialize.min.js"></script>
+  
+  <!-- //////////////////////////////////////////////////////////////////////////// -->
+</body>
+
+</html>
