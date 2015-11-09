@@ -32,7 +32,7 @@ module.exports = function(grunt) {
     express: {
       all: {
         options: {
-          port: 9000,
+          port: 9001,
           bases: ["app"],
           livereload: true
         }
@@ -89,7 +89,7 @@ module.exports = function(grunt) {
       dist: {
         options: {
           region: 'eu-west-1',
-          bucket: 'account-shield-retail-website-deployment-test',
+          bucket: 'account-shield-user-pages',
           differential: true,
           displayChangesOnly: true,
           params: {

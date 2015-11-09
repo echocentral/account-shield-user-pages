@@ -1,15 +1,15 @@
 var asApp = angular.module('ngApp', []);
 
-asApp.controller('ASCtrl', function($scope) {
+asApp.controller('ASCtrl', function($scope, $location) {
 
 	window.scope = $scope;
 
-	var accountShieldClient = new AccountShieldClient("http://localhost:8080/account-shield", "d91db4f1-dce0-4e47-9564-0dd62d4e2bcb", "9724d714-fa3b-4f97-90f8-c5eaf8165aa4");
+	var accountShieldClient = new AccountShieldClient("http://dev.echo-central.com:8080/account-shield", $location.search().account, $location.search().user);
 
 	async.parallel([function(done) {
-		async.waterfall([function(done){
+		async.waterfall([function(done) {
 			accountShieldClient.getUser(done);
-		}, function(user, done){
+		}, function(user, done) {
 			$scope.user = user;
 			done();
 		}], done);
@@ -48,5 +48,8 @@ asApp.controller('ASCtrl', function($scope) {
 			return;
 		}
 		$scope.$apply();
+		$('.collapsible').collapsible({
+			accordion: false
+		});
 	});
 });

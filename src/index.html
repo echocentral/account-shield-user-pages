@@ -15,7 +15,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/async/1.4.2/async.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.9/angular.min.js"></script>
     <script src="js/ajax.js"></script>
-    <script src="js/mock-account-shield.js"></script>
+    <!--script src="js/mock-account-shield.js"></script-->
+    <script src="js/account-shield.js"></script>
     <script src="js/controllers.js"></script>
     
     <style type="text/css">
@@ -69,53 +70,129 @@
 </head>
 
 <body ng-controller="ASCtrl">
-    <div id="content-main">
-        <div class="content-main-container z-depth-2">
-            <div class="row">
-                <ul class="tabs purple-text active-text-purple">
-                    <li class="tab col s4"><a class="active" href="#security-activity"><i class="material-icons">list</i> Activity</a></li>
-                    <li class="tab col s4"><a href="#security-devices"><i class="material-icons">devices</i> Devices</a></li>
-                    <li class="tab col s4"><a href="#security-settings"><i class="material-icons">settings</i> Settings</a></li>
-                </ul>
-            </div>
-            <div id="security-activity" class="panel white z-depth-1">
-                <h4><i class="material-icons small">list</i> User account activity</h4>
-                <p class="light">Track sessions used with this account in the last 30 days</p>
-                <ul class="session-cards collapsible z-depth-0" data-collapsible="accordion">
-                    <li class="session-card" ng-repeat="session in sessions">
-                        <div class="collapsible-header active">
-                            <div class="row">
-                                <div class="col s2 m1 l1">
-                                    <i class="material-icons session-type-icon grey-text text-darken-2"></i>
+
+    <!-- START MAIN -->
+    <div id="main">
+        <!-- START WRAPPER -->
+        <div class="wrapper">
+            
+            <!-- START CONTENT -->
+            <section id="content">   
+
+        <!--start container-->
+        <div class="container">
+          <div class="section">
+
+            <div id="content-main" class="col s11 m9 l10">
+                <div class="content-main-container col s11 m10 l9">
+                    <ul class="tabs purple-text active-text-purple">
+                        <li class="tab col s4"><a class="active" href="#security-activity"><i class="material-icons">list</i> Activity</a></li>
+                        <li class="tab col s4"><a href="#security-devices"><i class="material-icons">devices</i> Devices</a></li>
+                        <li class="tab col s4"><a href="#security-settings"><i class="material-icons">settings</i> Settings</a></li>
+                        <button class="btn" onclick="parent.postMessage('close', '*');return false;" style="float:right">Close</button>
+                    </ul>
+                    <div id="security-activity" class="panel white z-depth-1">
+                        <h4><i class="material-icons small">list</i> User account activity</h4>
+                        <p class="light">Track sessions used with this account in the last 30 days</p>
+                        <ul class="session-cards collapsible z-depth-0" data-collapsible="accordion">
+                            <li class="session-card" ng-repeat="session in sessions | orderBy:'-time'">
+                                <div class="collapsible-header active">
+                                    <div class="row">
+                                        <div class="col s2 m1 l1">
+                                            <i class="material-icons session-type-icon grey-text text-darken-2"></i>
+                                        </div>
+                                        <div class="col s10 m10 l3 truncate">
+                                            <span class="time">{{session.time | date:'medium'}}</span>
+                                        </div>
+                                        <div class="col s10 m10 l6 truncate">
+                                            <span class="session-type">{{session.device.platform}} {{session.device.type}}</span>
+                                            <span class="place grey-text">- {{session.connection.city}}, {{session.connection.country}}</span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col s10 m10 l3 truncate">
-                                    <span class="session-type">{{session.time | date:medium}}</span>
+                                <div class="collapsible-body">
+                                    <div class="row" ng-repeat="item in session.history | orderBy:'-time'">
+                                        <div class="name col s8 offset-s1">{{item.title}}</div>
+                                        <div class="value col s3">{{item.time | date:'mediumTime'}}</div>
+                                    </div>
                                 </div>
-                                <div class="col s10 m10 l6 truncate">
-                                    <span class="place">{{session.device.platform}} {{session.device.type}}</span>
-                                    <span class="time grey-text">- {{session.connection.city}}, {{session.connection.country}}</span>
+                            </li>
+                        </ul>
+                        <p class="right-align light">Notice anything suspicious? <a href="#">Report it</a></p>
+                    </div>
+                    <div id="security-devices" class="panel white z-depth-1">
+                        <h4><i class="material-icons small">devices</i> User verified devices</h4>
+                        <p class="light">Review and manage which devices have access to this account</p>
+                        <ul class="device-cards collapsible z-depth-0" data-collapsible="accordion">
+                            <li class="device-card" ng-repeat="device in devices | orderBy: '-sessions[0].time'">
+                                <div class="collapsible-header active">
+                                    <div class="row">
+                                        <div class="col s2 m1 l1">
+                                            <i class="material-icons device-type-icon grey-text text-darken-2" title="{{device.type}}"></i>
+                                        </div>
+                                        <div class="col s10 m10 l3 truncate">
+                                            <span class="device-type">{{device.platform}} {{device.type}}</span>
+                                        </div>
+                                        <div class="col s10 m10 l6 truncate">
+                                            <span class="place">{{device.sessions[0].connection.city}}, {{device.sessions[0].connection.country}}</span>
+                                            <span class="time grey-text">- {{device.sessions[0].time | date:'medium'}}</span>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="collapsible-body">
-                            <div class="row" ng-repeat="item in session.history">
-                                <div class="name col s8 offset-s1">{{item.title}}</div>
-                                <div class="value col s3">{{item.duration / 60 | number:0}} mins</div>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-                <p class="right-align light">Notice anything suspicious? <a href="#">Report it</a></p>
-            </div>
-            <div id="security-devices" class="panel white z-depth-1">
-                <h4><i class="material-icons small">devices</i> User verified devices</h4>
-                <p class="light">Review and manage which devices have access to this account</p>
-                <ul class="device-cards collapsible z-depth-0" data-collapsible="accordion">
-                    <li class="device-card" ng-repeat="device in devices">
-                        <div class="collapsible-header active">
-                            <div class="row">
-                                <div class="col s2 m1 l1">
-                                    <i class="material-icons device-type-icon grey-text text-darken-2" title="{{device.type}}"></i>
+                                <div class="collapsible-body">
+                                    <div class="row">
+                                        <div class="name col s3">Account access</div>
+                                        <div class="value col s8 offset-s1">
+                                            <button class="btn btn-small red darken-1 z-depth-0">Remove</button>
+                                            <i class="material-icons hint tooltipped" data-position="bottom" data-delay="50" data-tooltip="Forget this device and treat it as unrecognized if used again.">help_outline</i>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="name col s3">Last locations used</div>
+                                        <div class="value col s8 offset-s1">
+                                            <ul class="location-cards collapsible z-depth-0" data-collapsible="accordion">
+                                                <li class="location-card" ng-repeat="session in device.sessions">
+                                                    <div class="collapsible-header transparent no-padding">
+                                                        <span class="place">{{session.connection.city}}, {{session.connection.country}}</span>
+                                                        <span class="time grey-text hide-on-small-only">- {{session.time | date:'medium'}}</span>
+                                                    </div>
+                                                    <div class="collapsible-body">
+                                                        <div class="row location-time">
+                                                            <div class="name col s12 m2 no-padding">Time</div>
+                                                            <div class="value col s12 m9 offset-m1">{{session.time | date:'medium'}}</div>
+                                                        </div>
+                                                        <div class="row location-duration">
+                                                            <div class="name col s12 m2 no-padding">Duration</div>
+                                                            <div class="value col s12 m9 offset-m1">12 mins</div>
+                                                        </div>
+                                                        <div class="row location-map">
+                                                            <div class="name col s12 m2 no-padding">Location</div>
+                                                            <div class="value col s12 m9 offset-m1">
+                                                                <a href="https://www.google.com/maps/@{{episode.case.watchValues['location~coords']}},10z" target="map" title="Open in Google Maps">
+                                                                    <img src="https://maps.googleapis.com/maps/api/staticmap?center={{episode.case.watchValues['location~coords']}}&zoom=10&size=600x350&markers=icon:http://echo-central.com.s3-website-us-east-1.amazonaws.com/circle.png|shadow:false|51.0797111,-1.8083435" alt="Location map" style="width: 100%; filter: saturate(0); -webkit-filter: saturate(0);" />
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row location-map-caption">
+                                                            <div class="name col s12 m2 no-padding"></div>
+                                                            <div class="value col s12 m9 offset-m1 grey-text">Approximate location as reported by your internet provider</div>
+                                                        </div>
+                                                        <div class="row location-place">
+                                                            <div class="name col s12 m2 no-padding"></div>
+                                                            <div class="value col s12 m9 offset-m1">{{session.connection.city}}, {{session.connection.country}}</div>
+                                                        </div>
+                                                        <div class="row location-ip">
+                                                            <div class="name col s12 m2 no-padding">IP Address</div>
+                                                            <div class="value col s12 m9 offset-m1">
+                                                                {{session.connection.ipAddress}}
+                                                                <i class="material-icons hint tooltipped" data-position="bottom" data-delay="50" data-tooltip="To help you confirm that this activity was yours, you can check whether the IP address belongs to an Internet Service Provider that you've used recently.">help_outline</i>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="col s10 m10 l3 truncate">
                                     <span class="device-type">{{device.platform}} {{device.type}}</span>
