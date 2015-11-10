@@ -30,14 +30,23 @@
 
         /* Helpers */
         .action {cursor: pointer;}
-        .hint {margin-left: 0.25em; opacity: 0.25; cursor: help;}
+        .hint {margin-left: 0.25em; opacity: 0.25; cursor: help; vertical-align: top;}
 
         /* Specific styling */
-        #content-main {overflow: auto;}
+        #content-main {margin-top: 4%; overflow: auto;}
         #content-main .content-main-container {float: none; margin: auto; max-width: 60rem;}
+        #content-main .container {width: 100%;}
         #content-main .tabs {background-color: transparent;}
         #content-main .tabs i {vertical-align: middle;}
-        #content-main .panel {margin: 2rem 0; padding: 1px 1rem 1rem;}
+
+        .ng-loaded #content-main #loader {display: none;}
+        #content-main #loader {margin: 10rem 0;}
+        #content-main #loader:after {content: 'Loading . . .'; display: block; margin-top: 2rem; white-space: pre-wrap; animation: 0s toolong 20s forwards;}
+        @keyframes toolong {to {content: 'Sorry, this is taking a lot longer than usual\AIf the problem persists you may want to try reloading the page by pressing the F5 key';}}
+
+        #content-main .panel {display: none; margin: 2rem 0;}
+        .ng-loaded #content-main .panel {display: block;}
+        #content-main .panel h4 {font-size: 1.75rem;}
         #content-main .collapsible-header {height: auto;}
         #content-main .current>.collapsible-header {border-right: 10px solid #8bc34a;}
         @media only screen and (max-width : 992px) {
@@ -47,8 +56,11 @@
         #content-main .collapsible-header .row {margin-bottom: 0;}
         #content-main .collapsible-body {max-height: 20rem; padding: 0 1rem; overflow: auto;}
         #content-main .collapsible-body .collapsible-body {max-height: initial;}
+        #content-main .collapsible-body .row {margin: 4px 0;}
+        #content-main .collapsible-body .bordered tr:last-child {border-bottom: none;}
         #content-main .session-card .collapsible-header .session-type-icon:before{content: "verified_user"; font-weight: normal; color: #8bc34a;}
         #content-main .session-card .collapsible-header.alert .session-type-icon:before{content: "report"; color: #fdd835;}
+        #content-main .session-card .collapsible-body {overflow-y: scroll;}
         #content-main .session-card .collapsible-body .value {text-align: right; font-weight: 300;}
         #content-main .device-card .collapsible-header .device-type-icon:before{content: "devices"; font-weight: normal;}
         #content-main .device-card .collapsible-header .device-type-icon[title^='Phone']:before{content: "phone_android";}
@@ -58,31 +70,45 @@
         #content-main .device-card .collapsible-header .device-type-icon[title^='Desktop']:before{content: "tv";}
         #content-main .device-card .collapsible-header .device-type {font-weight: bold;}
         #content-main .device-card .collapsible-header .time {padding-left: 0.5em;}
-        #content-main .device-card .collapsible-body .row {padding-top: 1rem;}
+        #content-main .device-card .collapsible-body {overflow-y: scroll;}
+        #content-main .device-card .collapsible-body .collapsible-body {overflow-y: auto;}
         #content-main .device-card .collapsible-body .name {text-align: right; font-weight: 300;}
         #content-main .device-card .location-cards {margin-top: -10px; border: none;}
         #content-main .device-card .location-card .collapsible-header:after {content: '\25bc'; float: right; margin-right: 0.5rem; font-size: 80%; color: darkgrey; text-shadow: 1px 1px 0 white;}
         #content-main .device-card .location-card .collapsible-header.active:after {content: '\25b2';}
         #content-main .device-card .location-card .collapsible-body {font-size: 90%;}
         #content-main .device-card .location-card .collapsible-body .location-map {margin-bottom: 0;}
-        #content-main #settings-choose td {font-weight: bold;}
+        #content-main .settings-cards .collapsible-body {padding-left: 3.5rem;}
+        #content-main .settings-cards .collapsible-body p {margin: 1rem 0; padding: 0;}
+        #content-main .settings-cards td {font-weight: bold;}
+        #content-main .settings-cards .controls {padding-bottom: 1rem;}
+        #content-main #report {padding: 0.25rem 1rem;}
     </style>
 </head>
 
 <body ng-controller="ASCtrl">
     <div id="content-main">
-        <div class="content-main-container z-depth-2">
-            <div class="row">
-                <button class="btn" onclick="parent.postMessage('close', '*');return false;" style="float:right">Close</button>
+        <div class="content-main-container white z-depth-2">
+            <div class="row no-margin">
+                <button class="btn z-depth-0" onclick="parent.postMessage('close', '*');return false;" style="float:right">Close</button>
             </div>
-            <div class="row">
-                <ul class="tabs purple-text active-text-purple">
+            <div class="row container">
+                <ul class="tabs">
                     <li class="tab col s4"><a class="active" href="#security-activity"><i class="material-icons">list</i> Activity</a></li>
                     <li class="tab col s4"><a href="#security-devices"><i class="material-icons">devices</i> Devices</a></li>
                     <li class="tab col s4"><a href="#security-settings"><i class="material-icons">settings</i> Settings</a></li>
                 </ul>
             </div>
-            <div id="security-activity" class="panel white z-depth-1">
+            <div class="divider grey darken-3"></div>
+            <div id="loader" class="center grey-text">
+                <div class="preloader-wrapper big active">
+                    <div class="spinner-layer spinner-blue"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div>
+                    <div class="spinner-layer spinner-red"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div>
+                    <div class="spinner-layer spinner-yellow"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div>
+                    <div class="spinner-layer spinner-green"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div>
+                </div>
+            </div>
+            <div id="security-activity" class="panel container z-depth-0">
                 <h4><i class="material-icons small">list</i> User account activity</h4>
                 <p class="light">Track sessions used with this account in the last 30 days</p>
                 <ul class="session-cards collapsible z-depth-0" data-collapsible="accordion">
@@ -109,9 +135,8 @@
                         </div>
                     </li>
                 </ul>
-                <p class="right-align light">Notice anything suspicious? <a href="#">Report it</a></p>
             </div>
-            <div id="security-devices" class="panel white z-depth-1">
+            <div id="security-devices" class="panel container z-depth-0">
                 <h4><i class="material-icons small">devices</i> User verified devices</h4>
                 <p class="light">Review and manage which devices have access to this account</p>
                 <ul class="device-cards collapsible z-depth-0" data-collapsible="accordion">
@@ -188,7 +213,7 @@
                     </li>
                 </ul>
             </div>
-            <div id="security-settings" class="panel white z-depth-1">
+            <div id="security-settings" class="panel container z-depth-0">
                 <h4><i class="material-icons small">settings</i> User security settings</h4>
                 <p class="light">Protect you account - get alerted to login attempts</p>
                 <ul class="settings-cards collapsible z-depth-0">
@@ -200,7 +225,7 @@
                         <div class="collapsible-body">
                             <div class="row">
                                 <div class="col s6">
-                                    <p><b>We use these contact details to communicate with you about activity on your account<b><br><br><i class="material-icons settings-type-icon yellow-text text-darken-2">warning</i> The information you enter here should be personal to you - do not provide details of  means of communication which you share with other people.</p>
+                                    <p><b>We use these contact details to communicate with you about activity on your account</b><br><br><i class="material-icons settings-type-icon yellow-text text-darken-2">warning</i> The information you enter here should be personal to you - do not provide details of  means of communication which you share with other people.</p>
                                 </div>
                                 <div class="col s6">
                                     <div id="edit-email" class="row">
@@ -215,6 +240,12 @@
                                             <label for="sms">Mobile no.</label>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                            <div class="controls row right-align">
+                                <div class="col s12">
+                                    <button class="btn btn-small">Save</button>
+                                    <button class="btn btn-small grey darken-3 white-text">Cancel</button>
                                 </div>
                             </div>
                         </div>
@@ -274,6 +305,7 @@
                     </li>                                
                 </ul>
             </div>
+            <p id="report" class="container right-align light grey darken-3 grey-text">Notice anything suspicious? <a href="#">Report it</a></p>
         </div>
     </div>
 

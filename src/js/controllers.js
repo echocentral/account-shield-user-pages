@@ -51,5 +51,7 @@ asApp.controller('ASCtrl', function($scope, $location) {
 		$('.collapsible').collapsible({
 			accordion: false
 		});
+		$('.tooltipped').tooltip({delay: 50});
+		document.body.className+=' ng-loaded'
 	});
 });
