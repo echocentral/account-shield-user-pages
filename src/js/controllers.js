@@ -18,14 +18,7 @@ asApp.controller('ASCtrl', function($scope, $location) {
 			accountShieldClient.getSessions(done);
 		}, function(sessions, done) {
 			$scope.sessions = sessions;
-			async.each(sessions, function(session, done) {
-				async.waterfall([function(done) {
-					accountShieldClient.getSessionHistory(session.id, done);
-				}, function(history, done) {
-					session.history = history;
-					done();
-				}], done);
-			}, done);
+			done();
 		}], done);
 	}, function(done) {
 		async.waterfall([function(done) {
@@ -51,7 +44,23 @@ asApp.controller('ASCtrl', function($scope, $location) {
 		$('.collapsible').collapsible({
 			accordion: false
 		});
-		$('.tooltipped').tooltip({delay: 50});
-		document.body.className+=' ng-loaded'
+		$('.tooltipped').tooltip({
+			delay: 50
+		});
+		document.body.className += ' ng-loaded'
+		async.each($scope.sessions, function(session, done) {
+			async.waterfall([function(done) {
+				accountShieldClient.getSessionHistory(session.id, done);
+			}, function(history, done) {
+				session.history = history;
+				done();
+			}], done);
+		}, function(err) {
+			if (err) {
+				console.error(err);
+				Materialize.toast(err.message, 4000, "error-message");
+			}
+			$scope.$apply();
+		});
 	});
 });
