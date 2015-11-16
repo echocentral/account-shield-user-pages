@@ -44,9 +44,9 @@
         #content-main #loader:after {content: 'Loading . . .'; display: block; margin-top: 2rem; white-space: pre-wrap; animation: 0s toolong 20s forwards;}
         @keyframes toolong {to {content: 'Sorry, this is taking a lot longer than usual\AIf the problem persists you may want to try reloading the page by pressing the F5 key';}}
 
-        #content-main .panel {display: none; margin: 2rem 0;}
+        #content-main .panel {display: none; margin: 1rem 0 2rem;}
         .ng-loaded #content-main .panel {display: block;}
-        #content-main .panel h4 {font-size: 1.75rem;}
+        #content-main .panel h4 {margin: 0 -1.5rem; padding: 1rem 1.5rem; font-size: 1.75rem;}
         #content-main .collapsible-header {height: auto;}
         #content-main .current>.collapsible-header {border-right: 10px solid #8bc34a;}
         @media only screen and (max-width : 992px) {
@@ -80,6 +80,7 @@
         #content-main .device-card .location-card .collapsible-body .location-map {margin-bottom: 0;}
         #content-main .settings-cards .collapsible-body {padding-left: 3.5rem;}
         #content-main .settings-cards .collapsible-body p {margin: 1rem 0; padding: 0;}
+        #content-main .settings-cards th {word-wrap: break-word; word-break: break-all;}
         #content-main .settings-cards td {font-weight: bold;}
         #content-main .settings-cards .controls {padding-bottom: 1rem;}
         #content-main #report {padding: 0.25rem 1rem;}
@@ -99,17 +100,8 @@
                     <li class="tab col s4"><a href="#security-settings"><i class="material-icons">settings</i> Settings</a></li>
                 </ul>
             </div>
-            <div class="divider grey darken-3"></div>
-            <div id="loader" class="center grey-text">
-                <div class="preloader-wrapper big active">
-                    <div class="spinner-layer spinner-blue"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div>
-                    <div class="spinner-layer spinner-red"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div>
-                    <div class="spinner-layer spinner-yellow"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div>
-                    <div class="spinner-layer spinner-green"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div>
-                </div>
-            </div>
             <div id="security-activity" class="panel container z-depth-0">
-                <h4><i class="material-icons small">list</i> User account activity</h4>
+                <h4 class="grey darken-2 white-text"><i class="material-icons small">list</i> User account activity</h4>
                 <p class="light">Track sessions used with this account in the last 30 days</p>
                 <ul class="session-cards collapsible z-depth-0" data-collapsible="accordion">
                     <li class="session-card" ng-repeat="session in sessions | orderBy:'-time'">
@@ -137,7 +129,7 @@
                 </ul>
             </div>
             <div id="security-devices" class="panel container z-depth-0">
-                <h4><i class="material-icons small">devices</i> User verified devices</h4>
+                <h4 class="grey darken-2 white-text"><i class="material-icons small">devices</i> User verified devices</h4>
                 <p class="light">Review and manage which devices have access to this account</p>
                 <ul class="device-cards collapsible z-depth-0" data-collapsible="accordion">
                     <li class="device-card" ng-repeat="device in devices | orderBy: '-sessions[0].time'">
@@ -214,7 +206,7 @@
                 </ul>
             </div>
             <div id="security-settings" class="panel container z-depth-0">
-                <h4><i class="material-icons small">settings</i> User security settings</h4>
+                <h4 class="grey darken-2 white-text"><i class="material-icons small">settings</i> User security settings</h4>
                 <p class="light">Protect you account - get alerted to login attempts</p>
                 <ul class="settings-cards collapsible z-depth-0">
                     <li id="settings-set" class="settings-card">
@@ -224,10 +216,10 @@
                         </div>
                         <div class="collapsible-body">
                             <div class="row">
-                                <div class="col s6">
+                                <div class="col s12 m6">
                                     <p><b>We use these contact details to communicate with you about activity on your account</b><br><br><i class="material-icons settings-type-icon yellow-text text-darken-2">warning</i> The information you enter here should be personal to you - do not provide details of  means of communication which you share with other people.</p>
                                 </div>
-                                <div class="col s6">
+                                <div class="col s12 m6">
                                     <div id="edit-email" class="row">
                                         <div class="input-field col s12">
                                             <input id="email" type="email" class="validate" ng-model="user.email">
@@ -304,6 +296,14 @@
                         </div>
                     </li>                                
                 </ul>
+            </div>
+            <div id="loader" class="center grey-text">
+                <div class="preloader-wrapper big active">
+                    <div class="spinner-layer spinner-blue"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div>
+                    <div class="spinner-layer spinner-red"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div>
+                    <div class="spinner-layer spinner-yellow"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div>
+                    <div class="spinner-layer spinner-green"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div>
+                </div>
             </div>
             <p id="report" class="container right-align light grey darken-3 grey-text">Notice anything suspicious? <a href="#">Report it</a></p>
         </div>
