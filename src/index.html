@@ -47,6 +47,8 @@
         #content-main .panel {display: none; margin: 1rem 0 2rem;}
         .ng-loaded #content-main .panel {display: block;}
         #content-main .panel h4 {margin: 0 -1.5rem; padding: 1rem 1.5rem; font-size: 1.75rem;}
+        #content-main .panel>.collapsible, #content-main .panel>.collapsible>li {position: relative; min-height: 2.75rem;}
+        #content-main .panel>.collapsible:before {position: absolute; content: 'No data available yet - please try later'; width: 100%; padding: 0.5rem; border-bottom: 1px solid #ddd; color: #aaa; text-align: center;}
         #content-main .collapsible-header {height: auto;}
         #content-main .current>.collapsible-header {border-right: 10px solid #8bc34a;}
         @media only screen and (max-width : 992px) {
