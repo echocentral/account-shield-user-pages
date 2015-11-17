@@ -53,9 +53,6 @@ input[type=text]:focus:not([readonly])+label, input[type=password]:focus:not([re
   vertical-align: text-bottom;
   overflow: hidden;
   font-variant-ligatures: common-ligatures; }
-/* Hide icons if font doesnt load */
-body:not(.icons-loaded) .material-icons {
-    color: transparent !important; }
 /* Add new super large icon size */
 i.massive {
   font-size: 10rem; }

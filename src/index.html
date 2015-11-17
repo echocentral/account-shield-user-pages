@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
 
     <!-- CSS  -->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" onload="setTimeout(function(){document.body.className+=' icons-loaded'},250)">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="/css/materialize.min.css" rel="stylesheet">
     <link href="/css/materializeplus.css" rel="stylesheet">
     <!--link href="/css/style.css" rel="stylesheet"-->
@@ -43,6 +43,9 @@
         #content-main #loader {margin: 10rem 0;}
         #content-main #loader:after {content: 'Loading . . .'; display: block; margin-top: 2rem; white-space: pre-wrap; animation: 0s toolong 20s forwards;}
         @keyframes toolong {to {content: 'Sorry, this is taking a lot longer than usual\AIf the problem persists you may want to try reloading the page by pressing the F5 key';}}
+        #content-main #error, .ng-error #content-main #loader {display: none;}
+        .ng-error #content-main #error {display: block;}
+        .ng-error #content-main .panel {display: none !important;}
 
         #content-main .panel {display: none; margin: 1rem 0 2rem;}
         .ng-loaded #content-main .panel {display: block;}
@@ -307,6 +310,15 @@
                     <div class="spinner-layer spinner-red"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div>
                     <div class="spinner-layer spinner-yellow"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div>
                     <div class="spinner-layer spinner-green"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div>
+                </div>
+            </div>
+            <div id="error" class="center grey-text">
+                <div class="row">
+                    <div class="col s12">
+                        <br>
+                        <i class="material-icons large">thumb_down</i><br><br>
+                        <p>Sorry, we are having trouble retrieving your details at the moment - please try later</p>
+                    </div>
                 </div>
             </div>
             <p id="report" class="container right-align light grey darken-3 grey-text">Notice anything suspicious? <a href="#">Report it</a></p>

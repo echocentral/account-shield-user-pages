@@ -38,6 +38,7 @@ asApp.controller('ASCtrl', function($scope, $location) {
 		if (err) {
 			console.error(err);
 			Materialize.toast(err.message, 4000, "error-message");
+			document.body.className += ' ng-error'
 			return;
 		}
 		$scope.$apply();
