@@ -85,7 +85,9 @@
         #content-main .settings-cards th {word-wrap: break-word; word-break: break-all;}
         #content-main .settings-cards td {font-weight: bold;}
         #content-main .settings-cards .controls {padding-bottom: 1rem;}
+        #content-main #settings-choose .toggle:empty:before {content: '(tap to set up)'}
         #content-main #report {padding: 0.25rem 1rem;}
+        #content-main .place, #content-main .time {text-transform: capitalize;}
     </style>
 </head>
 
@@ -225,13 +227,13 @@
                                     <div id="edit-email" class="row">
                                         <div class="input-field col s12">
                                             <input id="email" type="email" class="validate" ng-model="user.email">
-                                            <label for="email">Email</label>
+                                            <label for="email" ng-class="{active: user.email}">Email</label>
                                         </div>
                                     </div>
                                     <div id="edit-sms" class="row">
                                         <div class="input-field col s12">
                                             <input id="sms" type="tel" maxlength="20" class="validate" ng-model="user.mobile">
-                                            <label for="sms">Mobile no.</label>
+                                            <label for="sms" ng-class="{active: user.mobile}">Mobile no.</label>
                                         </div>
                                     </div>
                                 </div>
@@ -257,12 +259,12 @@
                                         <th class="center-align">
                                             <i class="material-icons">email</i>
                                             <br>Email<br>
-                                            <span class="light">to <a class="toggle" href="#edit-email" onclick="$('#settings-set .collapsible-header').click()">{{user.email}}</a></span>
+                                            <span class="light">to <a class="toggle email" href="#edit-email" onclick="$('#settings-set .collapsible-header').click()">{{user.email}}</a></span>
                                         </th>
                                         <th class="center-align">
                                             <i class="material-icons">textsms</i>
                                             <br>Text<br>
-                                            <span class="light">to <a class="toggle" href="#edit-sms" onclick="$('#settings-set .collapsible-header').click()">{{user.mobile}}</a></span>
+                                            <span class="light">to <a class="toggle sms" href="#edit-sms" onclick="$('#settings-set .collapsible-header').click()">{{user.mobile}}</a></span>
                                         </th>
                                     </tr>
                                 </thead>
@@ -274,11 +276,11 @@
                                             <span class="light">E.g. if a hacker has your password and tries to sign in to your account</span>
                                         </td>
                                         <td class="center-align">
-                                            <input id="critical-email" class="filled-in" type="checkbox" ng-model="user.notifications.alerts.email">
+                                            <input id="critical-email" class="filled-in" type="checkbox" ng-model="user.notifications.alerts.email" ng-disabled="!user.email">
                                             <label for="critical-email"></label>
                                         </td>
                                         <td class="center-align">
-                                            <input id="critical-sms" class="filled-in" type="checkbox" ng-model="user.notifications.alerts.sms">
+                                            <input id="critical-sms" class="filled-in" type="checkbox" ng-model="user.notifications.alerts.sms" ng-disabled="!user.mobile">
                                             <label for="critical-sms"></label>
                                         </td>
                                     </tr>
@@ -288,7 +290,7 @@
                                             <span class="light">Receive a regular digest of your account activity</span>
                                         </td>
                                         <td class="center-align">
-                                            <input id="regular-email" class="filled-in" type="checkbox" ng-model="user.notifications.activity">
+                                            <input id="regular-email" class="filled-in" type="checkbox" ng-model="user.notifications.activity" ng-disabled="!user.email">
                                             <label for="regular-email"></label>
                                         </td>
                                         <td></td>
